@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Net.Sockets;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PortScanner
 {
@@ -14,11 +10,13 @@ namespace PortScanner
             //program variable initialisation
             string address;
             int port = 1;
+            bool interactiveMode = false;
 
             if (args.Length != 0)
             { address = args[0]; } //get address to target from command line
             else
             {
+                interactiveMode = true; //since no parameters were passed, it it reasonable to assume that the program may not have been launched from the command prompt. Thus, interactive mode.
                 //if none is specified
                 Console.Write("Usage: " + AppDomain.CurrentDomain.FriendlyName + " <address>\nEnter address to target: ");
                 address = Console.ReadLine();
@@ -48,6 +46,12 @@ namespace PortScanner
                 port++;
             }
 
+            //if in interactive mode, wait for keypress before exit.
+            if (interactiveMode)
+            {
+                Console.WriteLine("Press any key to continue.");
+                Console.ReadKey();
+            }
         }
     }
 }
