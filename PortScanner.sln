@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2006
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PortScanner", "PortScanner\PortScanner.csproj", "{DA15A6F6-AEF4-46C9-96EC-CF2D3DE57D29}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DA15A6F6-AEF4-46C9-96EC-CF2D3DE57D29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA15A6F6-AEF4-46C9-96EC-CF2D3DE57D29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA15A6F6-AEF4-46C9-96EC-CF2D3DE57D29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA15A6F6-AEF4-46C9-96EC-CF2D3DE57D29}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0DC0C110-B2CA-4833-910E-4107C3F9EA74}
+	EndGlobalSection
+EndGlobal
