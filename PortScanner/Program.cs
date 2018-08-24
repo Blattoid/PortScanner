@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Net.Sockets;
+using System.Xml.Linq;
+using System.Linq;
 
 namespace PortScanner
 {
@@ -28,11 +31,15 @@ namespace PortScanner
 
         public static int port = 1;
         public static int maxport = 65535;
+        public static List<int> openports = new List<int>(new int[] { });
         static void Main(string[] args)
         {
+            Console.ForegroundColor = ConsoleColor.White;
+
             //program variable initialisation
             string address = "";
             bool interactiveMode = false;
+            XDocument doc = XDocument.Load("PortXMLData.xml"); //load port assignment data
 
             if (args.Length > 0)
             { address = args[0]; } //get address to target from command line
@@ -77,25 +84,47 @@ namespace PortScanner
             {
                 try
                 {
+                    //make a new connection for every port
                     TcpClient tcp = new TcpClient();
-                    //connect to the server 
-                    Console.WriteLine("Trying port " + port);
-                    tcp.Connect(address, port); //if the connection is unsuccessful, the error is triggered.
 
-                    //otherwise, report an open port.
-                    Console.WriteLine("Port " + port + " is open!");
-                    tcp.Close();
+                    //attempt connect to port. if after 1 second it doesn't work, declare the port as closed.
+                    Console.Write("Trying port " + port);
+                    var result = tcp.BeginConnect(address, port, null, null);
+                    var success = result.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(0.1));
+
+                    if (success)
+                    {
+                        //report an open port and keep track of it.
+                        Console.CursorLeft = 0;
+                        Console.WriteLine("Port " + port + " is open!");
+                        openports.Add(port);
+                        tcp.EndConnect(result);
+                    }
+
+                    Console.CursorLeft = 0;
+                    port++; //move on to the next port.
                 }
                 catch (Exception err)
                 {
-                    if (!err.Message.Contains("actively refused"))
-                    {
-                        Console.WriteLine("Error: " + err.Message);
-                        break;
-                    }
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Error: " + err.Message);
+                    Console.ForegroundColor = ConsoleColor.White;
                 }
-                port++;
             }
+
+            //port identification
+            if (openports.Count > 0)
+            {
+                Console.WriteLine("Open ports:");
+                foreach (int port in openports)
+                {
+                    var addresses = from addr in doc.Root.Elements("record")
+                                    where addr.Element("port").Value.Contains(port.ToString())
+                                    select addr.Value;
+                    Console.WriteLine(port+": "+addresses.ElementAt(0).Replace(port.ToString(), ""));
+                }
+            }
+            else { Console.WriteLine("No open ports were found."); }
 
             end: //label for teleportation to the end. kill the ender dragon.
             //if in interactive mode, wait for keypress before exit.
