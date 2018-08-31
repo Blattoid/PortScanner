@@ -4,6 +4,8 @@ using System.Text.RegularExpressions;
 using System.Net.Sockets;
 using System.Xml.Linq;
 using System.Linq;
+using System.Reflection;
+using System.IO;
 
 namespace PortScanner
 {
@@ -39,7 +41,9 @@ namespace PortScanner
             //program variable initialisation
             string address = "";
             bool interactiveMode = false;
-            XDocument doc = XDocument.Load("PortXMLData.xml"); //load port assignment data
+
+            //load port assignment data from executable folder.
+            XDocument PortData = XDocument.Load(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)+"\\PortXMLData.xml");
 
             if (args.Length > 0)
             { address = args[0]; } //get address to target from command line
@@ -111,17 +115,20 @@ namespace PortScanner
                     Console.ForegroundColor = ConsoleColor.White;
                 }
             }
-
+            
             //port identification
             if (openports.Count > 0)
             {
                 Console.WriteLine("Open ports:");
                 foreach (int port in openports)
                 {
-                    var addresses = from addr in doc.Root.Elements("record")
+                    var addresses = from addr in PortData.Root.Elements("record")
                                     where addr.Element("port").Value.Contains(port.ToString())
                                     select addr.Value;
-                    Console.WriteLine(port+": "+addresses.ElementAt(0).Replace(port.ToString(), ""));
+
+                    //error handling catches unknown ports. otherwise display port name.
+                    try { Console.WriteLine(port + ": " + addresses.ElementAt(0).Replace(port.ToString(), "")); }
+                    catch (ArgumentOutOfRangeException) { Console.WriteLine(port + ": UNKNOWN"); }
                 }
             }
             else { Console.WriteLine("No open ports were found."); }
