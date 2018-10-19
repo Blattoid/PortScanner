@@ -113,6 +113,7 @@ namespace PortScanner
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Error: " + err.Message);
                     Console.ForegroundColor = ConsoleColor.White;
+                    port++; //skip that port
                 }
             }
             
